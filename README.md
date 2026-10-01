@@ -81,16 +81,18 @@ In Edge, Developer mode is in the left sidebar. In the folder picker, press ⌘�
 
 Open Dynatrace (a URL that contains `/e/<environment id>/`), log in, click the extension icon and press **Add this environment**. Chrome then asks whether the extension may access that site; allow it. The extension has no access to any site until you add one, and it only ever asks for the Dynatrace origin you are on.
 
-<p>
-<img src="docs/images/popup-add.png" width="340" alt="The extension popup on a Dynatrace tab that has not been added yet: MCP server connected, no environments, and a blue button that reads Add this environment (abc12345)">
-<img src="docs/images/popup.png" width="340" alt="The extension popup after adding: MCP server connected, one environment named s1 with its environment id, origin and an open tab, and the recent AI requests with their HTTP status and duration">
+<p align="center">
+<img src="docs/images/popup-add.png" width="340" align="top" alt="The extension popup on a Dynatrace tab that has not been added yet: MCP server connected, no environments, and a blue button that reads Add this environment (abc12345)">
+<img src="docs/images/popup.png" width="340" align="top" alt="The extension popup after adding: MCP server connected, one environment named s1 with its environment id, origin and an open tab, and the recent AI requests with their HTTP status and duration">
 </p>
 
 The environment gets a short name (the environment id, or its last dash-separated part: `acme-shop-s1` becomes `s1`). Click the name to rename it; the AI selects the environment by this name. Repeat for other environments (stage, prod, …). The first one is the default.
 
 A small pill then appears in the bottom right corner of your Dynatrace tabs. It shows whether the AI is connected and what it is asking for while it works. Click its dot to collapse it.
 
+<p align="center">
 <img src="docs/images/pill.png" width="560" alt="The status pill in the bottom right corner of the page: a green dot and the text AI: list_services · Reading service metrics · HTTP 200">
+</p>
 
 You don't have to keep Dynatrace in front. The bridge uses an open Dynatrace tab in the background, without focusing it. If no tab is open, it opens one in front of you, so that you can log in if Dynatrace asks.
 
@@ -102,7 +104,9 @@ You don't have to keep Dynatrace in front. The bridge uses an open Dynatrace tab
 
 The server updates by itself: `@latest` makes your client start the newest version the next time it starts. When the extension falls behind the server, you are told in three places: the extension popup, the pill in the Dynatrace tab, and a note at the end of the AI's tool results. Re-run the `install-extension` command, then click reload ↻ on **Dynatrace Bridge** in the extensions page.
 
+<p align="center">
 <img src="docs/images/popup-update.png" width="340" alt="The extension popup with an amber notice: Extension update needed. The MCP server is v1.1.0 and this extension is v1.0.0. Below it the command npx -y dynatrace-bridge-mcp@latest install-extension with a Copy button, and the instruction to click reload on the extensions page">
+</p>
 
 The same places tell you to restart your AI client when the running server is older than the extension, or when a newer release exists on npm.
 

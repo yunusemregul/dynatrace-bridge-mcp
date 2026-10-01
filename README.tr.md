@@ -81,16 +81,18 @@ Edge'de Geliştirici modu sol kenar çubuğundadır. Klasör seçicide yolu yap�
 
 Dynatrace'i açın (adresinde `/e/<ortam kimliği>/` bulunan bir sayfa), giriş yapın, uzantı simgesine tıklayın ve **Bu ortamı ekle** düğmesine basın. Chrome, uzantının bu siteye erişip erişemeyeceğini sorar; izin verin. Siz bir ortam ekleyene kadar uzantının hiçbir siteye erişimi yoktur ve yalnızca o an bulunduğunuz Dynatrace adresi için izin ister.
 
-<p>
-<img src="docs/images/tr/popup-add.png" width="340" alt="Henüz eklenmemiş bir Dynatrace sekmesinde uzantı penceresi: MCP sunucusu bağlı, ortam yok ve Bu ortamı ekle (abc12345) yazan mavi bir düğme">
-<img src="docs/images/tr/popup.png" width="340" alt="Ekleme sonrasında uzantı penceresi: MCP sunucusu bağlı, s1 adlı bir ortam (ortam kimliği, adresi ve açık sekmesiyle) ve son AI istekleri, HTTP durumları ve süreleriyle">
+<p align="center">
+<img src="docs/images/tr/popup-add.png" width="340" align="top" alt="Henüz eklenmemiş bir Dynatrace sekmesinde uzantı penceresi: MCP sunucusu bağlı, ortam yok ve Bu ortamı ekle (abc12345) yazan mavi bir düğme">
+<img src="docs/images/tr/popup.png" width="340" align="top" alt="Ekleme sonrasında uzantı penceresi: MCP sunucusu bağlı, s1 adlı bir ortam (ortam kimliği, adresi ve açık sekmesiyle) ve son AI istekleri, HTTP durumları ve süreleriyle">
 </p>
 
 Ortama kısa bir ad verilir (ortam kimliği ya da kimliğin tireyle ayrılmış son parçası: `acme-shop-s1` için `s1`). Adı değiştirmek için üzerine tıklayın; AI ortamı bu adla seçer. Diğer ortamlar (stage, prod, …) için de aynısını yapın. İlk eklenen ortam varsayılandır.
 
 Ardından Dynatrace sekmelerinizin sağ alt köşesinde küçük bir etiket belirir. AI'ın bağlı olup olmadığını ve çalışırken ne istediğini gösterir. Küçültmek için noktasına tıklayın.
 
+<p align="center">
 <img src="docs/images/pill.png" width="560" alt="Sayfanın sağ alt köşesindeki durum etiketi: yeşil bir nokta ve AI: list_services · Reading service metrics · HTTP 200 yazısı">
+</p>
 
 Dynatrace'i önde tutmanız gerekmez. Köprü, açık bir Dynatrace sekmesini arka planda, öne getirmeden kullanır. Açık sekme yoksa önünüze bir sekme açar; böylece Dynatrace giriş isterse giriş yapabilirsiniz.
 
@@ -102,7 +104,9 @@ Dynatrace'i önde tutmanız gerekmez. Köprü, açık bir Dynatrace sekmesini ar
 
 Sunucu kendini günceller: `@latest` sayesinde istemciniz bir sonraki açılışında en yeni sürümü başlatır. Uzantı sunucunun gerisinde kaldığında bunu üç yerde görürsünüz: uzantı penceresinde, Dynatrace sekmesindeki etikette ve AI'ın araç sonuçlarının sonundaki notta. `install-extension` komutunu yeniden çalıştırın, ardından Uzantılar sayfasında **Dynatrace Bridge** üzerindeki yeniden yükle ↻ simgesine tıklayın.
 
+<p align="center">
 <img src="docs/images/tr/popup-update.png" width="340" alt="Uzantı penceresinde turuncu bir uyarı: Eklenti güncellemesi gerekli. MCP sunucusu v1.1.0, bu eklenti ise v1.0.0. Altında Kopyala düğmesiyle npx -y dynatrace-bridge-mcp@latest install-extension komutu ve uzantılar sayfasında yeniden yükle düğmesine tıklama talimatı">
+</p>
 
 Çalışan sunucu uzantıdan eskiyse ya da npm'de daha yeni bir sürüm varsa, aynı yerlerde AI istemcinizi yeniden başlatmanız söylenir.
 
