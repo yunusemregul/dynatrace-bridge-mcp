@@ -1,0 +1,245 @@
+{
+  "extName": {
+    "message": "Dynatrace Bridge"
+  },
+  "extDescription": {
+    "message": "Oturum açtığınız Dynatrace Managed sekmesini yerel bir MCP sunucusuna bağlar, böylece AI asistanları servisleri, trace'leri, metrikleri ve problemleri sorgulayabilir. Salt okunur."
+  },
+  "versionLine": {
+    "message": "v$1 · salt okunur"
+  },
+  "settings": {
+    "message": "Ayarlar"
+  },
+  "statusTitle": {
+    "message": "Durum"
+  },
+  "mcpServerPort": {
+    "message": "MCP sunucusu · port $1"
+  },
+  "wsConnected": {
+    "message": "Bağlı"
+  },
+  "wsNotRunning": {
+    "message": "Çalışmıyor"
+  },
+  "wsHint": {
+    "message": "AI istemciniz açıkken sunucuyu otomatik başlatır. Henüz kurmadınız mı? Bunu bir kez çalıştırın:"
+  },
+  "wsHintLink": {
+    "message": "Cursor, Codex veya başka bir istemci mi kullanıyorsunuz? Kurulum adımları"
+  },
+  "copy": {
+    "message": "Kopyala"
+  },
+  "copied": {
+    "message": "Kopyalandı"
+  },
+  "environments": {
+    "message": "Ortamlar"
+  },
+  "environmentsNone": {
+    "message": "Henüz yok. Bir Dynatrace ortamı açıp buradan ekleyin."
+  },
+  "tabsGoOne": {
+    "message": "$1 sekme · Git"
+  },
+  "tabsGoMany": {
+    "message": "$1 sekme · Git"
+  },
+  "openEnv": {
+    "message": "Aç"
+  },
+  "switchToTabTitle": {
+    "message": "Dynatrace sekmesine geç"
+  },
+  "openInNewTabTitle": {
+    "message": "Dynatrace'i yeni sekmede aç"
+  },
+  "tabOpen": {
+    "message": "Sekme açık"
+  },
+  "tabClosed": {
+    "message": "Açık sekme yok; AI ihtiyaç duyduğunda öne bir sekme açılır, gerekirse oturum açabilirsiniz"
+  },
+  "noSiteAccess": {
+    "message": "Site erişimi kaldırılmış. Bu ortamı silip yeniden ekleyin."
+  },
+  "renameEnvTitle": {
+    "message": "Yeniden adlandırmak için tıklayın. AI ortamı bu adla seçer."
+  },
+  "removeEnvTitle": {
+    "message": "\"$1\" ortamını kaldır"
+  },
+  "confirmDelete": {
+    "message": "silinsin mi?"
+  },
+  "addThisEnvironment": {
+    "message": "Bu ortamı ekle ($1)"
+  },
+  "addEnvironmentHint": {
+    "message": "Chrome bu siteye erişim izni isteyecek. Popup kapansa bile ortam eklenir, kontrol etmek için yeniden açın."
+  },
+  "allowSiteAccess": {
+    "message": "Chrome penceresinde site erişimine izin verin…"
+  },
+  "siteAccessDenied": {
+    "message": "Site erişimi reddedildi"
+  },
+  "addingEnvironment": {
+    "message": "Ortam ekleniyor…"
+  },
+  "addedEnv": {
+    "message": "$1 eklendi ($2)"
+  },
+  "removedEnv": {
+    "message": "$1 kaldırıldı"
+  },
+  "renamedEnv": {
+    "message": "Yeni ad: $1"
+  },
+  "alreadyAdded": {
+    "message": "Bu sekme \"$1\" ortamı."
+  },
+  "notDynatracePage": {
+    "message": "Etkin sekme bir Dynatrace ortam sayfası değil. Dynatrace'i açın (adresinde /e/<ortam kimliği>/ bulunan bir sayfa) ve eklemek için bu popup'ı yeniden açın."
+  },
+  "notLoggedIn": {
+    "message": "Bu bir Dynatrace ortamına benziyor ama oturum açık değil. Bu sekmede Dynatrace'e giriş yapın, sonra bu popup'ı yeniden açın."
+  },
+  "pageNotReadable": {
+    "message": "Bu sekme okunamadı. Sayfayı yenileyip bu popup'ı yeniden açın."
+  },
+  "errNameRequired": {
+    "message": "Ortamın bir adı olmalı"
+  },
+  "errInvalidName": {
+    "message": "Yalnızca harf, rakam, boşluk, nokta, tire ve alt çizgi kullanın; ad bir harf ya da rakamla başlamalı (en fazla 64 karakter)"
+  },
+  "errDuplicateName": {
+    "message": "\"$1\" adlı ortam zaten var"
+  },
+  "errInvalidPort": {
+    "message": "Port 1 ile 65535 arasında olmalı"
+  },
+  "wsPortLabel": {
+    "message": "MCP sunucusu WebSocket portu"
+  },
+  "save": {
+    "message": "Kaydet"
+  },
+  "saved": {
+    "message": "Kaydedildi ✓"
+  },
+  "recentActivity": {
+    "message": "Son işlemler"
+  },
+  "noActivity": {
+    "message": "Henüz AI isteği yok"
+  },
+  "activityRunning": {
+    "message": "Çalışıyor…"
+  },
+  "activityDone": {
+    "message": "Tamamlandı"
+  },
+  "activityHttp": {
+    "message": "HTTP $1"
+  },
+  "activityFailed": {
+    "message": "Başarısız"
+  },
+  "activityRequestTool": {
+    "message": "istek"
+  },
+  "pollsOne": {
+    "message": "$1 yoklama"
+  },
+  "pollsMany": {
+    "message": "$1 yoklama"
+  },
+  "durationMs": {
+    "message": "$1 ms"
+  },
+  "durationSeconds": {
+    "message": "$1 sn"
+  },
+  "badgeNoServer": {
+    "message": "MCP sunucusu çalışmıyor"
+  },
+  "badgeNoServerTitle": {
+    "message": "Dynatrace Bridge: AI istemciniz bekleniyor. Claude Code, Cursor ya da sunucuyu kullanan başka bir MCP istemcisi açıkken MCP sunucusu otomatik başlar."
+  },
+  "badgeConnected": {
+    "message": "AI bağlı"
+  },
+  "badgeConnectedTitle": {
+    "message": "Dynatrace Bridge: AI bu sekme üzerinden \"$1\" ortamını sorgulayabilir (salt okunur)."
+  },
+  "badgeBusy": {
+    "message": "AI: $1…"
+  },
+  "badgeBusyMore": {
+    "message": "AI: $1… (+$2)"
+  },
+  "badgeBusyTitle": {
+    "message": "AI şunu çalıştırıyor: $1 (başlangıç $2)"
+  },
+  "badgeDone": {
+    "message": "AI: $1 · $2"
+  },
+  "badgeDoneTitle": {
+    "message": "Son AI isteği $1 ($2): $3"
+  },
+  "badgeFailed": {
+    "message": "AI: $1 başarısız"
+  },
+  "badgeFailedTitle": {
+    "message": "Son AI isteği $1 ($2) başarısız: $3"
+  },
+  "badgeCollapse": {
+    "message": "Dynatrace Bridge'i küçült"
+  },
+  "badgeExpand": {
+    "message": "Dynatrace Bridge'i genişlet"
+  },
+  "updateExtensionTitle": {
+    "message": "Eklenti güncellemesi gerekli"
+  },
+  "updateExtensionText": {
+    "message": "MCP sunucusu v$1, bu eklenti ise v$2. Şu komutu çalıştırın:"
+  },
+  "updateExtensionReload": {
+    "message": "Ardından tarayıcınızın eklentiler sayfasında (chrome://extensions) bu eklentinin yeniden yükle düğmesine tıklayın."
+  },
+  "updateRestartTitle": {
+    "message": "MCP sunucusu yeniden başlatılmalı"
+  },
+  "updateRestartText": {
+    "message": "Bu eklenti v$2, çalışan MCP sunucusu ise v$1. Güncel sunucunun başlaması için AI istemcinizi yeniden başlatın."
+  },
+  "updateServerTitle": {
+    "message": "Sunucu güncellemesi var"
+  },
+  "updateServerText": {
+    "message": "dynatrace-bridge-mcp v$1 yayımlandı, çalışan sunucu ise v$2. Yeni sürümün başlaması için AI istemcinizi yeniden başlatın, ardından istendiğinde bu eklentiyi güncelleyin."
+  },
+  "badgeExtensionOutdated": {
+    "message": "Eklenti güncellemesi gerekli"
+  },
+  "badgeExtensionOutdatedTitle": {
+    "message": "Dynatrace Bridge: MCP sunucusu v$1, bu eklenti ise v$2. npx -y dynatrace-bridge-mcp@latest install-extension komutunu çalıştırın, ardından eklentiler sayfasında yeniden yükle düğmesine tıklayın. Komut eklenti penceresinde de var."
+  },
+  "badgeServerRestart": {
+    "message": "MCP sunucusu yeniden başlatılmalı"
+  },
+  "badgeServerRestartTitle": {
+    "message": "Dynatrace Bridge: bu eklenti v$2, çalışan MCP sunucusu ise v$1. Güncel sunucunun başlaması için AI istemcinizi yeniden başlatın."
+  },
+  "badgeServerUpdate": {
+    "message": "Sunucu güncellemesi var"
+  },
+  "badgeServerUpdateTitle": {
+    "message": "Dynatrace Bridge: dynatrace-bridge-mcp v$1 yayımlandı, çalışan sunucu ise v$2. Yeni sürümün başlaması için AI istemcinizi yeniden başlatın."
+  }
+}

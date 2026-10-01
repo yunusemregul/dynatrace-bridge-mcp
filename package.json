@@ -1,0 +1,57 @@
+{
+  "name": "dynatrace-bridge-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that lets AI assistants query Dynatrace Managed (services, traces, metrics, pods, problems) through your authenticated browser session, with no API tokens required.",
+  "type": "module",
+  "main": "server.js",
+  "bin": {
+    "dynatrace-bridge-mcp": "server.js"
+  },
+  "files": [
+    "server.js",
+    "install-extension.js",
+    "lib",
+    "extension",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "verify": "node scripts/verify.js",
+    "prepublishOnly": "npm run verify",
+    "version": "node scripts/sync-extension-version.js && git add extension/manifest.json",
+    "pm2:start": "pm2 start server.js --name dynatrace-mcp --time",
+    "pm2:stop": "pm2 stop dynatrace-mcp",
+    "pm2:restart": "pm2 restart dynatrace-mcp",
+    "pm2:delete": "pm2 delete dynatrace-mcp",
+    "pm2:logs": "pm2 logs dynatrace-mcp",
+    "pm2:status": "pm2 status dynatrace-mcp",
+    "pm2:save": "pm2 save",
+    "pm2:startup": "pm2 startup"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "dynatrace",
+    "dynatrace-managed",
+    "observability",
+    "apm",
+    "traces",
+    "chrome-extension",
+    "claude",
+    "ai"
+  ],
+  "author": "Emre Gül",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yunusemregul/dynatrace-bridge-mcp.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "ws": "^8.0.0"
+  }
+}

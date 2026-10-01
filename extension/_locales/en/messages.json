@@ -1,0 +1,245 @@
+{
+  "extName": {
+    "message": "Dynatrace Bridge"
+  },
+  "extDescription": {
+    "message": "Bridges your logged-in Dynatrace Managed browser session to a local MCP server so AI assistants can query services, traces, metrics and problems. Read-only."
+  },
+  "versionLine": {
+    "message": "v$1 · read-only"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "statusTitle": {
+    "message": "Status"
+  },
+  "mcpServerPort": {
+    "message": "MCP server · port $1"
+  },
+  "wsConnected": {
+    "message": "Connected"
+  },
+  "wsNotRunning": {
+    "message": "Not running"
+  },
+  "wsHint": {
+    "message": "Your AI client starts it automatically while it's open. Not set up yet? Run this once:"
+  },
+  "wsHintLink": {
+    "message": "Using Cursor, Codex or another client? See setup"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "copied": {
+    "message": "Copied"
+  },
+  "environments": {
+    "message": "Environments"
+  },
+  "environmentsNone": {
+    "message": "None yet. Open a Dynatrace environment and add it here."
+  },
+  "tabsGoOne": {
+    "message": "$1 tab · Go"
+  },
+  "tabsGoMany": {
+    "message": "$1 tabs · Go"
+  },
+  "openEnv": {
+    "message": "Open"
+  },
+  "switchToTabTitle": {
+    "message": "Switch to the Dynatrace tab"
+  },
+  "openInNewTabTitle": {
+    "message": "Open Dynatrace in a new tab"
+  },
+  "tabOpen": {
+    "message": "Tab open"
+  },
+  "tabClosed": {
+    "message": "No tab open; one is opened in front when the AI needs it, so you can log in if asked"
+  },
+  "noSiteAccess": {
+    "message": "Site access was revoked. Remove this environment and add it again."
+  },
+  "renameEnvTitle": {
+    "message": "Click to rename. The AI selects the environment by this name."
+  },
+  "removeEnvTitle": {
+    "message": "Remove \"$1\""
+  },
+  "confirmDelete": {
+    "message": "delete?"
+  },
+  "addThisEnvironment": {
+    "message": "Add this environment ($1)"
+  },
+  "addEnvironmentHint": {
+    "message": "Chrome will ask for access to this site. If the popup closes, the environment is still added, so reopen to check."
+  },
+  "allowSiteAccess": {
+    "message": "Allow site access in the Chrome prompt…"
+  },
+  "siteAccessDenied": {
+    "message": "Site access denied"
+  },
+  "addingEnvironment": {
+    "message": "Adding environment…"
+  },
+  "addedEnv": {
+    "message": "Added $1 ($2)"
+  },
+  "removedEnv": {
+    "message": "Removed $1"
+  },
+  "renamedEnv": {
+    "message": "Renamed to $1"
+  },
+  "alreadyAdded": {
+    "message": "This tab is the environment \"$1\"."
+  },
+  "notDynatracePage": {
+    "message": "The active tab is not a Dynatrace environment page. Open Dynatrace (a URL containing /e/<environment id>/) and reopen this popup to add it."
+  },
+  "notLoggedIn": {
+    "message": "This looks like a Dynatrace environment, but you are not logged in. Log in to Dynatrace in this tab, then reopen this popup."
+  },
+  "pageNotReadable": {
+    "message": "This tab could not be read. Reload the page and reopen this popup."
+  },
+  "errNameRequired": {
+    "message": "An environment needs a name"
+  },
+  "errInvalidName": {
+    "message": "Use letters, digits, spaces, dots, dashes and underscores only, starting with a letter or digit (at most 64 characters)"
+  },
+  "errDuplicateName": {
+    "message": "Duplicate environment name \"$1\""
+  },
+  "errInvalidPort": {
+    "message": "The port must be between 1 and 65535"
+  },
+  "wsPortLabel": {
+    "message": "MCP server WebSocket port"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "saved": {
+    "message": "Saved ✓"
+  },
+  "recentActivity": {
+    "message": "Recent activity"
+  },
+  "noActivity": {
+    "message": "No AI requests yet"
+  },
+  "activityRunning": {
+    "message": "Running…"
+  },
+  "activityDone": {
+    "message": "Done"
+  },
+  "activityHttp": {
+    "message": "HTTP $1"
+  },
+  "activityFailed": {
+    "message": "Failed"
+  },
+  "activityRequestTool": {
+    "message": "request"
+  },
+  "pollsOne": {
+    "message": "$1 poll"
+  },
+  "pollsMany": {
+    "message": "$1 polls"
+  },
+  "durationMs": {
+    "message": "$1 ms"
+  },
+  "durationSeconds": {
+    "message": "$1 s"
+  },
+  "badgeNoServer": {
+    "message": "MCP server not running"
+  },
+  "badgeNoServerTitle": {
+    "message": "Dynatrace Bridge: waiting for your AI client. The MCP server starts automatically while Claude Code, Cursor or another MCP client that uses it is open."
+  },
+  "badgeConnected": {
+    "message": "AI connected"
+  },
+  "badgeConnectedTitle": {
+    "message": "Dynatrace Bridge: the AI can query \"$1\" through this tab (read-only)."
+  },
+  "badgeBusy": {
+    "message": "AI: $1…"
+  },
+  "badgeBusyMore": {
+    "message": "AI: $1… (+$2)"
+  },
+  "badgeBusyTitle": {
+    "message": "The AI is running $1 (started $2)"
+  },
+  "badgeDone": {
+    "message": "AI: $1 · $2"
+  },
+  "badgeDoneTitle": {
+    "message": "Last AI request $1 at $2: $3"
+  },
+  "badgeFailed": {
+    "message": "AI: $1 failed"
+  },
+  "badgeFailedTitle": {
+    "message": "Last AI request $1 at $2 failed: $3"
+  },
+  "badgeCollapse": {
+    "message": "Collapse Dynatrace Bridge"
+  },
+  "badgeExpand": {
+    "message": "Expand Dynatrace Bridge"
+  },
+  "updateExtensionTitle": {
+    "message": "Extension update needed"
+  },
+  "updateExtensionText": {
+    "message": "The MCP server is v$1 and this extension is v$2. Run this command:"
+  },
+  "updateExtensionReload": {
+    "message": "Then click reload on this extension in your browser's extensions page (chrome://extensions)."
+  },
+  "updateRestartTitle": {
+    "message": "MCP server restart needed"
+  },
+  "updateRestartText": {
+    "message": "This extension is v$2 but the running MCP server is v$1. Restart your AI client so that it starts the current server."
+  },
+  "updateServerTitle": {
+    "message": "Server update available"
+  },
+  "updateServerText": {
+    "message": "dynatrace-bridge-mcp v$1 has been released and the running server is v$2. Restart your AI client to start the new version, then update this extension when it asks."
+  },
+  "badgeExtensionOutdated": {
+    "message": "Extension update needed"
+  },
+  "badgeExtensionOutdatedTitle": {
+    "message": "Dynatrace Bridge: the MCP server is v$1 and this extension is v$2. Run npx -y dynatrace-bridge-mcp@latest install-extension, then click reload on the extensions page. The extension popup has the command."
+  },
+  "badgeServerRestart": {
+    "message": "MCP server restart needed"
+  },
+  "badgeServerRestartTitle": {
+    "message": "Dynatrace Bridge: this extension is v$2 but the running MCP server is v$1. Restart your AI client so that it starts the current server."
+  },
+  "badgeServerUpdate": {
+    "message": "Server update available"
+  },
+  "badgeServerUpdateTitle": {
+    "message": "Dynatrace Bridge: dynatrace-bridge-mcp v$1 has been released and the running server is v$2. Restart your AI client to start the new version."
+  }
+}

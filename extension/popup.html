@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #1a1a1a;
+      --surface: #242424;
+      --surface-raised: #2c2d2e;
+      --border: #333436;
+      --border-strong: #4a4b4f;
+      --text: #f2f2f4;
+      --text-secondary: #c2c3c9;
+      --text-muted: #9c9da4;
+      --blue: #1496ff;
+      --blue-hover: #45abff;
+      --blue-text: #5cb6ff;
+      --blue-tint: rgba(20, 150, 255, 0.16);
+      --blue-tint-hover: rgba(20, 150, 255, 0.28);
+      --on-blue: #04121f;
+      --purple: #b4a0ff;
+      --purple-deep: #6f2da8;
+      --green: #73be28;
+      --green-text: #8ad23f;
+      --green-tint: rgba(115, 190, 40, 0.16);
+      --green-border: rgba(115, 190, 40, 0.5);
+      --teal: #00a1b2;
+      --teal-text: #2ec6d6;
+      --amber: #f5a623;
+      --red: #ef4444;
+      --red-text: #ff7b7b;
+      --red-tint: rgba(239, 68, 68, 0.14);
+      --focus: #5cb6ff;
+      --green-glow: rgba(115, 190, 40, 0.55);
+      --amber-glow: rgba(245, 166, 35, 0.5);
+      --red-glow: rgba(239, 68, 68, 0.55);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 340px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+    }
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+    .header {
+      position: relative;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--purple-deep) 38%, var(--teal) 70%, var(--green));
+    }
+    .logo {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      display: block;
+    }
+    .header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .header .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .gear-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .gear-btn:hover { color: var(--text); background: var(--surface-raised); }
+    .section {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-of-type { border-bottom: none; }
+    .section-title {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--border-strong);
+    }
+    .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green-glow); }
+    .dot.red { background: var(--red); box-shadow: 0 0 6px var(--red-glow); }
+    .dot.yellow { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+    .status-label { color: var(--text-secondary); min-width: 0; overflow-wrap: anywhere; }
+    .status-value { margin-left: auto; font-weight: 500; text-align: right; }
+    .status-value.ok { color: var(--green-text); }
+    .status-value.err { color: var(--red-text); }
+    .status-value.warn { color: var(--amber); }
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 2px 0 4px 16px;
+    }
+    .hint a { color: var(--blue-text); }
+    .hint a:hover { color: var(--blue-hover); }
+    .cmd {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin: 5px 0 4px;
+      padding: 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .cmd code {
+      flex: 1;
+      color: var(--text-secondary);
+      font-size: 10.5px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      user-select: all;
+    }
+    .copy-btn {
+      flex: none;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--blue-text);
+      background: var(--blue-tint);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .copy-btn:hover { background: var(--blue-tint-hover); }
+    .update {
+      margin: 6px 0 2px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 6px;
+    }
+    .update-title { font-size: 12px; font-weight: 600; color: var(--amber); }
+    .update-text { margin-top: 3px; font-size: 11px; color: var(--text-secondary); overflow-wrap: anywhere; }
+    .env-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+    .env-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .env-name {
+      flex: 1;
+      min-width: 0;
+      padding: 3px 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      outline: none;
+    }
+    .env-name:hover { border-color: var(--border-strong); }
+    .env-name:focus { border-color: var(--blue); background: var(--bg); }
+    .env-meta {
+      margin: 4px 0 0 23px;
+      font-size: 11px;
+      color: var(--text-muted);
+      overflow-wrap: anywhere;
+    }
+    .env-meta .env-id { color: var(--text-secondary); font-family: Menlo, Consolas, monospace; font-size: 10.5px; }
+    .env-meta .warn { color: var(--amber); }
+    .open-btn {
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue-text);
+      background: transparent;
+      border: 1px solid var(--blue);
+      border-radius: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .open-btn:hover { background: var(--blue-tint); }
+    .open-btn.ok { color: var(--green-text); border-color: var(--green-border); }
+    .open-btn.ok:hover { background: var(--green-tint); }
+    .trash-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .trash-btn:hover { color: var(--red-text); }
+    .trash-btn.armed {
+      color: var(--red-text);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--red-tint);
+      border: 1px solid var(--red);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+    .empty {
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 12px;
+    }
+    .notice {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .notice.warn { color: var(--amber); }
+    .notice.ok { color: var(--green-text); }
+    .add-site-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--on-blue);
+      background: var(--blue);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    .add-site-btn:hover { background: var(--blue-hover); }
+    .add-site-btn:disabled { background: var(--surface-raised); color: var(--text-muted); cursor: default; }
+    .field { margin-bottom: 8px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 3px;
+    }
+    .field input {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      outline: none;
+    }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-tint); }
+    .save-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .save-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--on-blue);
+      background: var(--blue);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .save-btn:hover { background: var(--blue-hover); }
+    .save-msg { font-size: 11px; min-height: 14px; }
+    .save-msg.ok { color: var(--green-text); }
+    .save-msg.err { color: var(--red-text); }
+    .activity {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+    }
+    .activity:last-child { margin-bottom: 0; }
+    .activity-head {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .activity .tool {
+      font-weight: 600;
+      color: var(--purple);
+      overflow-wrap: anywhere;
+    }
+    .activity .state {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .activity .state.ok { color: var(--green-text); }
+    .activity .state.err { color: var(--red-text); }
+    .activity .state.warn { color: var(--amber); }
+    .activity .state.busy { color: var(--teal-text); }
+    .activity .label {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      overflow-wrap: anywhere;
+    }
+    .activity .meta {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .activity .error {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--red-text);
+      overflow-wrap: anywhere;
+    }
+    #activity-list {
+      max-height: 260px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img class="logo" src="icons/icon.svg" alt="">
+    <div class="title-block">
+      <h1 data-i18n="extName"></h1>
+      <div class="subtitle" id="version-line"></div>
+    </div>
+    <button class="gear-btn" id="gear-btn" data-i18n-title="settings">⚙</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title" data-i18n="statusTitle"></div>
+    <div class="status-row">
+      <span class="dot" id="ws-dot"></span>
+      <span class="status-label" id="ws-label"></span>
+      <span class="status-value" id="ws-status"></span>
+    </div>
+    <div class="hint" id="ws-hint" hidden>
+      <span data-i18n="wsHint"></span>
+      <div class="cmd"><code id="install-cmd">claude mcp add --scope user dynatrace-bridge-mcp -- npx -y dynatrace-bridge-mcp@latest</code><button class="copy-btn" id="copy-cmd" data-i18n="copy"></button></div>
+      <a href="https://github.com/yunusemregul/dynatrace-bridge-mcp#readme" target="_blank" rel="noopener" data-i18n="wsHintLink"></a>
+    </div>
+    <div class="update" id="update-extension" hidden>
+      <div class="update-title" data-i18n="updateExtensionTitle"></div>
+      <div class="update-text" id="update-extension-text"></div>
+      <div class="cmd"><code id="update-cmd">npx -y dynatrace-bridge-mcp@latest install-extension</code><button class="copy-btn" id="copy-update-cmd" data-i18n="copy"></button></div>
+      <div class="update-text" data-i18n="updateExtensionReload"></div>
+    </div>
+    <div class="update" id="update-restart" hidden>
+      <div class="update-title" data-i18n="updateRestartTitle"></div>
+      <div class="update-text" id="update-restart-text"></div>
+    </div>
+    <div class="update" id="update-server" hidden>
+      <div class="update-title" data-i18n="updateServerTitle"></div>
+      <div class="update-text" id="update-server-text"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" data-i18n="environments"></div>
+    <div id="env-rows"></div>
+    <button class="add-site-btn" id="add-env-btn" hidden></button>
+    <div class="hint" id="add-env-hint" hidden data-i18n="addEnvironmentHint"></div>
+    <div class="notice" id="page-notice" hidden></div>
+    <div class="save-msg" id="env-msg"></div>
+  </div>
+
+  <div class="section" id="settings-section" hidden>
+    <div class="section-title" data-i18n="settings"></div>
+    <div class="field">
+      <label for="ws-port" data-i18n="wsPortLabel"></label>
+      <input type="number" id="ws-port" min="1" max="65535" placeholder="47831">
+    </div>
+    <div class="save-row">
+      <button class="save-btn" id="save-btn" data-i18n="save"></button>
+      <span class="save-msg" id="save-msg"></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" data-i18n="recentActivity"></div>
+    <div id="activity-list">
+      <span class="empty" data-i18n="noActivity"></span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
