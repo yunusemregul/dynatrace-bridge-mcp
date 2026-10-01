@@ -82,8 +82,8 @@ Edge'de Geliştirici modu sol kenar çubuğundadır. Klasör seçicide yolu yap�
 Dynatrace'i açın (adresinde `/e/<ortam kimliği>/` bulunan bir sayfa), giriş yapın, uzantı simgesine tıklayın ve **Bu ortamı ekle** düğmesine basın. Chrome, uzantının bu siteye erişip erişemeyeceğini sorar; izin verin. Siz bir ortam ekleyene kadar uzantının hiçbir siteye erişimi yoktur ve yalnızca o an bulunduğunuz Dynatrace adresi için izin ister.
 
 <p align="center">
-<img src="docs/images/tr/popup-add.png" width="340" align="top" alt="Henüz eklenmemiş bir Dynatrace sekmesinde uzantı penceresi: MCP sunucusu bağlı, ortam yok ve Bu ortamı ekle (abc12345) yazan mavi bir düğme">
-<img src="docs/images/tr/popup.png" width="340" align="top" alt="Ekleme sonrasında uzantı penceresi: MCP sunucusu bağlı, s1 adlı bir ortam (ortam kimliği, adresi ve açık sekmesiyle) ve son AI istekleri, HTTP durumları ve süreleriyle">
+<img src="docs/images/tr/popup-add.png" width="340" align="middle" alt="Henüz eklenmemiş bir Dynatrace sekmesinde uzantı penceresi: MCP sunucusu bağlı, ortam yok ve Bu ortamı ekle (abc12345) yazan mavi bir düğme">
+<img src="docs/images/tr/popup.png" width="340" align="middle" alt="Ekleme sonrasında uzantı penceresi: MCP sunucusu bağlı, s1 adlı bir ortam (ortam kimliği, adresi ve açık sekmesiyle) ve son AI istekleri, HTTP durumları ve süreleriyle">
 </p>
 
 Ortama kısa bir ad verilir (ortam kimliği ya da kimliğin tireyle ayrılmış son parçası: `acme-shop-s1` için `s1`). Adı değiştirmek için üzerine tıklayın; AI ortamı bu adla seçer. Diğer ortamlar (stage, prod, …) için de aynısını yapın. İlk eklenen ortam varsayılandır.

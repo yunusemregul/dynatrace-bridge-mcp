@@ -82,8 +82,8 @@ In Edge, Developer mode is in the left sidebar. In the folder picker, press ⌘�
 Open Dynatrace (a URL that contains `/e/<environment id>/`), log in, click the extension icon and press **Add this environment**. Chrome then asks whether the extension may access that site; allow it. The extension has no access to any site until you add one, and it only ever asks for the Dynatrace origin you are on.
 
 <p align="center">
-<img src="docs/images/popup-add.png" width="340" align="top" alt="The extension popup on a Dynatrace tab that has not been added yet: MCP server connected, no environments, and a blue button that reads Add this environment (abc12345)">
-<img src="docs/images/popup.png" width="340" align="top" alt="The extension popup after adding: MCP server connected, one environment named s1 with its environment id, origin and an open tab, and the recent AI requests with their HTTP status and duration">
+<img src="docs/images/popup-add.png" width="340" align="middle" alt="The extension popup on a Dynatrace tab that has not been added yet: MCP server connected, no environments, and a blue button that reads Add this environment (abc12345)">
+<img src="docs/images/popup.png" width="340" align="middle" alt="The extension popup after adding: MCP server connected, one environment named s1 with its environment id, origin and an open tab, and the recent AI requests with their HTTP status and duration">
 </p>
 
 The environment gets a short name (the environment id, or its last dash-separated part: `acme-shop-s1` becomes `s1`). Click the name to rename it; the AI selects the environment by this name. Repeat for other environments (stage, prod, …). The first one is the default.
