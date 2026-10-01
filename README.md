@@ -52,7 +52,7 @@ code --add-mcp '{"name":"dynatrace-bridge-mcp","command":"npx","args":["-y","dyn
 
 **Standalone server:** run `npx -y dynatrace-bridge-mcp@latest` in a terminal and connect clients to `http://localhost:47832/mcp` (or `/sse` for older clients).
 
-**Several clients at once:** the first instance owns the two ports. Every further instance started by another client forwards its tool calls to the first one, so all clients share one browser connection.
+**Several clients at once:** the first instance owns the two ports. Every further instance started by another client forwards its tool calls to the first one, so all clients share one browser connection. When the first one goes away (its client was closed, for example), one of the others takes over the ports by itself within a few seconds and the rest follow it; nothing has to be reconnected.
 </details>
 
 ### 2. Install the browser extension
@@ -161,7 +161,7 @@ You can run steps 1 and 2. The browser steps need the user, because browsers don
 | `service_overview` | One service: percentiles, failures, throughput, callers and callees, hosts and pods, problems. |
 | `list_events` | Deployments, restarts, Kubernetes and anomaly events, identical ones collapsed. |
 | `list_problems` | Problems active in the window, filterable by status, impact, severity and entity. |
-| `get_problem` | One problem in depth: evidence, root cause findings, impact, trigger event, dependency path. |
+| `get_problem` | One problem as a compact overview: evidence by entity, root cause findings, impact, trigger event, affected requests, dependency path; `detail` gives one section in full. |
 
 **Kubernetes, hosts, processes**
 
@@ -195,7 +195,7 @@ You can run steps 1 and 2. The browser steps need the user, because browsers don
 | `service_backtrace` | Who calls a service, up to the entry requests and jobs. |
 | `top_exceptions` | Exception classes by count, across services or for one. |
 | `cron_job_statistics` | Cron jobs by total time, average, longest run, executions and failures. |
-| `top_database_statements` | SQL statements of a database service by total time, average, max or executions. |
+| `top_database_statements` | SQL statements of a database service by total time, average, max or executions; database services that share a name are combined. |
 | `statement_callers` | Which services, requests and jobs execute one SQL statement. |
 | `slow_statement_executions` | Slow executions of one statement with the traces they belong to. |
 

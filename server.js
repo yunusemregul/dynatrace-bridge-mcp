@@ -5,7 +5,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, ListToolsRequestSchema, ToolListChangedNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
 import http from 'http';
 import os from 'os';
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'crypto';
@@ -140,7 +140,26 @@ async function loadTools() {
   return loaded.sort((a, b) => a.order - b.order || a.position - b.position).map(entry => entry.tool);
 }
 
-const bridge = createBridge({ host: HOST, port: WS_PORT, extensionWaitMs: EXTENSION_WAIT_MS, log: (line) => log(line) });
+const mcpServers = new Set();
+const TOOL_CAPABILITIES = { capabilities: { tools: { listChanged: true } } };
+
+function announceToolListChange() {
+  for (const server of mcpServers) {
+    server.sendToolListChanged().catch(() => {});
+  }
+}
+
+function trackMcpServer(server) {
+  mcpServers.add(server);
+  const closed = server.onclose;
+  server.onclose = () => {
+    mcpServers.delete(server);
+    closed?.();
+  };
+  return server;
+}
+
+const bridge = createBridge({ host: HOST, port: WS_PORT, extensionWaitMs: EXTENSION_WAIT_MS, log: (line) => log(line), onEnvironmentsChange: announceToolListChange });
 const contextFor = createContextFactory({ bridge, version: VERSION, mcpPort: MCP_PORT });
 const tools = await loadTools();
 const toolsByName = new Map(tools.map(tool => [tool.name, tool]));
@@ -202,10 +221,10 @@ function listTools() {
 }
 
 function createMcpServer() {
-  const server = new Server({ name: NAME, version: VERSION }, { capabilities: { tools: {} } });
+  const server = new Server({ name: NAME, version: VERSION }, TOOL_CAPABILITIES);
   server.setRequestHandler(ListToolsRequestSchema, async () => listTools());
   server.setRequestHandler(CallToolRequestSchema, withVersionNote((request) => runTool(request.params.name, request.params.arguments || {})));
-  return server;
+  return trackMcpServer(server);
 }
 
 const sessions = new Map();
@@ -274,10 +293,7 @@ async function handleHandoff(req, res) {
   }
   handoffInProgress = true;
   answerJson(res, 202, { ok: true });
-  setImmediate(() => demoteToProxy({ version: peer.version, build: Number(peer.build) }).catch((error) => {
-    log(`Handing off failed: ${error?.message || error}`);
-    process.exit(1);
-  }));
+  setImmediate(() => demoteToProxy({ version: peer.version, build: Number(peer.build) }));
 }
 
 async function handleHttp(req, res) {
@@ -387,13 +403,23 @@ const httpServer = http.createServer((req, res) => {
   });
 });
 
+httpServer.on('error', (err) => {
+  if (httpServer.listening) log('HTTP server error:', err.message);
+});
+
 function startHttpServer() {
   return new Promise((resolve, reject) => {
-    httpServer.once('error', reject);
-    httpServer.listen(MCP_PORT, HOST, () => {
-      httpServer.on('error', (err) => log('HTTP server error:', err.message));
+    const failed = (err) => {
+      httpServer.off('listening', listening);
+      reject(err);
+    };
+    const listening = () => {
+      httpServer.off('error', failed);
       resolve();
-    });
+    };
+    httpServer.once('error', failed);
+    httpServer.once('listening', listening);
+    httpServer.listen(MCP_PORT, HOST);
   });
 }
 
@@ -420,92 +446,188 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function waitForPeer({ build = null, timeoutMs = 15000 } = {}) {
   const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
+  for (;;) {
     const peer = await checkRunningPeer();
     if (peer && (build === null || peer.build === build)) return peer;
+    if (Date.now() + 300 > deadline) return null;
     await sleep(300);
   }
-  return null;
 }
 
+const PROMOTION_GRACE_MS = 1000;
+const PROMOTION_ATTEMPTS = 6;
+const UPSTREAM_CONNECT_TIMEOUT_MS = 10000;
+const UPSTREAM_PING_TIMEOUT_MS = 3000;
+const MAX_RECOVERIES_PER_REQUEST = 3;
+
+const jitter = (ms) => Math.floor(Math.random() * ms);
+
+let role = 'proxy';
+let upstream = null;
+let transition = null;
+let transitionFailure = null;
 let stdioServer = null;
+let stdioClosed = false;
 let handoffInProgress = false;
 
-async function connectProxyClient() {
+function changeRole(work) {
+  const run = (transition || Promise.resolve())
+    .then(work)
+    .then(() => { transitionFailure = null; }, (error) => {
+      transitionFailure = String(error?.message || error);
+      log(`Role change failed: ${transitionFailure}`);
+    })
+    .finally(() => { if (transition === run) transition = null; });
+  transition = run;
+  return run;
+}
+
+async function bindPorts() {
+  try {
+    await bridge.start();
+    await startHttpServer();
+    return true;
+  } catch (err) {
+    await bridge.stop();
+    if (err.code !== 'EADDRINUSE') throw err;
+    return false;
+  }
+}
+
+async function releasePorts() {
+  await bridge.stop();
+  for (const t of [...streamableSessions.values()]) { try { await t.close(); } catch (e) { log(`Session close failed: ${e.message}`); } }
+  for (const { server } of [...sessions.values()]) { try { await server.close(); } catch (e) { log(`Session close failed: ${e.message}`); } }
+  httpServer.closeAllConnections?.();
+  await new Promise(r => httpServer.close(() => r()));
+}
+
+const lostPrimary = (e) => e?.code === 400 || e?.code === 404
+  || /Unknown session|Session not found|Server not initialized|Bad Request|ECONNREFUSED|fetch failed|Connection closed|Not connected/.test(String(e?.message || e));
+
+function announceRoleChange() {
+  stdioServer?.sendToolListChanged().catch(() => {});
+}
+
+async function attachUpstream() {
   const client = new Client({ name: `${NAME}-proxy`, version: VERSION }, { capabilities: {} });
-  await client.connect(new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${MCP_PORT}/mcp`)));
-  return client;
+  try {
+    await client.connect(new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${MCP_PORT}/mcp`)), { timeout: UPSTREAM_CONNECT_TIMEOUT_MS });
+  } catch (e) {
+    await client.close().catch(() => {});
+    throw e;
+  }
+  let probing = false;
+  client.onclose = () => { recover(client); };
+  client.onerror = () => {
+    if (probing || upstream !== client) return;
+    probing = true;
+    client.ping({ timeout: UPSTREAM_PING_TIMEOUT_MS }).then(() => { probing = false; }, (e) => {
+      probing = false;
+      if (lostPrimary(e)) recover(client);
+    });
+  };
+  client.setNotificationHandler(ToolListChangedNotificationSchema, () => stdioServer?.sendToolListChanged().catch(() => {}));
+  upstream = client;
 }
 
-function bindProxyHandlers(server, client) {
-  let current = client;
-  let reconnecting = null;
-  const reconnect = () => {
-    if (!reconnecting) {
-      log('Primary went away, waiting for a new one...');
-      const stale = current;
-      stale.onclose = null;
-      reconnecting = (async () => {
-        try { await stale.close(); } catch (e) { log(`Stale proxy client was already closed: ${e.message}`); }
-        const peer = await waitForPeer({ timeoutMs: 30000 });
-        if (!peer) {
-          log('No primary came back within 30s, exiting');
-          process.exit(1);
-        }
-        current = await connectProxyClient();
-        watch(current);
-        log(`Reattached to the new primary (v${peer.version})`);
-        return current;
-      })().finally(() => { reconnecting = null; });
-    }
-    return reconnecting;
-  };
-  const lostPrimary = (e) => e?.code === 400 || e?.code === 404
-    || /Unknown session|Session not found|Server not initialized|Bad Request|ECONNREFUSED|fetch failed/.test(String(e?.message || e));
-  const call = async (fn) => {
-    const c = await (reconnecting || Promise.resolve(current));
-    try {
-      return await fn(c);
-    } catch (e) {
-      if (!lostPrimary(e)) throw e;
-      return fn(await reconnect());
-    }
-  };
-  server.setRequestHandler(ListToolsRequestSchema, () => call(c => c.listTools()));
-  server.setRequestHandler(CallToolRequestSchema, (req) => call(c => c.callTool(req.params, undefined, { timeout: 600000 })));
-  const watch = (c) => {
-    c.onclose = () => { if (current === c && !reconnecting) reconnect().catch(() => process.exit(1)); };
-  };
-  watch(client);
+async function dropUpstream() {
+  const stale = upstream;
+  upstream = null;
+  if (!stale) return;
+  stale.onclose = null;
+  stale.onerror = null;
+  try { await stale.close(); } catch (e) { log(`Stale proxy client was already closed: ${e.message}`); }
 }
 
-async function attachStdioPrimary() {
-  stdioServer = createMcpServer();
-  stdioServer.onclose = () => log('stdio client disconnected (HTTP/WS still running)');
-  await stdioServer.connect(new StdioServerTransport());
+async function findPrimary({ graceMs = 0, peer = null } = {}) {
+  let live = peer ?? await waitForPeer({ timeoutMs: graceMs ? graceMs + jitter(1000) : 0 });
+  for (let attempt = 1; attempt <= PROMOTION_ATTEMPTS; attempt++) {
+    if (attempt > 1) {
+      await sleep(200 + jitter(300 * attempt));
+      live = await waitForPeer({ timeoutMs: 2000 });
+    }
+    if (live) {
+      try {
+        await attachUpstream();
+        log(`Proxying stdio to the primary (v${live.version}) at http://127.0.0.1:${MCP_PORT}/mcp`);
+        announceRoleChange();
+        return;
+      } catch (e) {
+        log(`Could not attach to the primary (v${live.version}): ${e.message}`);
+      }
+    } else if (await bindPorts()) {
+      role = 'primary';
+      log(`No primary was reachable: this instance (v${VERSION}) is now the primary on ports ${WS_PORT} (WebSocket) and ${MCP_PORT} (HTTP)`);
+      announceRoleChange();
+      return;
+    } else {
+      log(`Another instance took the ports first (attempt ${attempt} of ${PROMOTION_ATTEMPTS})`);
+    }
+  }
+  throw new Error(`no primary answered on port ${MCP_PORT} and ports ${WS_PORT} and ${MCP_PORT} could not be bound after ${PROMOTION_ATTEMPTS} attempts`);
+}
+
+function recover(stale) {
+  if (!transition && role === 'proxy' && upstream === stale) {
+    log('Primary went away, looking for a new one or taking over...');
+    changeRole(async () => {
+      await dropUpstream();
+      await findPrimary({ graceMs: PROMOTION_GRACE_MS });
+    });
+  }
+  return transition || Promise.resolve();
+}
+
+async function serve(local, remote, unavailable) {
+  let settled = false;
+  for (let round = 0; ; round++) {
+    while (transition) {
+      await transition;
+      settled = true;
+    }
+    if (role === 'primary') return local();
+    const client = upstream;
+    if (client) {
+      try {
+        return await remote(client);
+      } catch (e) {
+        if (!lostPrimary(e)) throw e;
+      }
+    }
+    if ((!client && settled) || round >= MAX_RECOVERIES_PER_REQUEST) {
+      return unavailable(`No Dynatrace Bridge server is reachable and this instance could not take over (${transitionFailure || 'the primary kept going away'}). Retry in a moment; if it keeps failing, reconnect the MCP server.`);
+    }
+    await recover(client);
+    settled = true;
+  }
+}
+
+async function attachStdio() {
+  const server = new Server({ name: NAME, version: VERSION }, TOOL_CAPABILITIES);
+  const callLocal = withVersionNote((request) => runTool(request.params.name, request.params.arguments || {}));
+  server.setRequestHandler(ListToolsRequestSchema, () => serve(() => listTools(), c => c.listTools(), () => listTools()));
+  server.setRequestHandler(CallToolRequestSchema, (request) => serve(() => callLocal(request), c => c.callTool(request.params, undefined, { timeout: 600000 }), errorResult));
+  server.onclose = () => {
+    stdioClosed = true;
+    if (role !== 'primary') process.exit(0);
+    log('stdio client disconnected (HTTP/WS still running)');
+  };
+  stdioServer = trackMcpServer(server);
+  await server.connect(new StdioServerTransport());
   log('MCP stdio transport attached');
 }
 
-async function demoteToProxy(peer) {
-  log(`Newer instance (v${peer.version}) is taking over, handing off the browser bridge...`);
-  await bridge.stop();
-  for (const t of streamableSessions.values()) { try { await t.close(); } catch (e) { log(`Session close failed: ${e.message}`); } }
-  for (const { server } of sessions.values()) { try { await server.close(); } catch (e) { log(`Session close failed: ${e.message}`); } }
-  httpServer.closeAllConnections?.();
-  await new Promise(r => httpServer.close(() => r()));
-
-  const next = await waitForPeer({ build: peer.build, timeoutMs: 20000 });
-  if (!next) {
-    log('The new instance never came up, exiting');
-    process.exit(1);
-  }
-  if (stdioServer) {
-    const client = await connectProxyClient();
-    bindProxyHandlers(stdioServer, client);
-    stdioServer.onclose = () => process.exit(0);
-  }
-  handoffInProgress = false;
-  log(`Now proxying stdio to the new primary (v${next.version})`);
+function demoteToProxy(peer) {
+  return changeRole(async () => {
+    log(`Newer instance (v${peer.version}) is taking over, handing off the browser bridge...`);
+    role = 'proxy';
+    await releasePorts();
+    if (stdioClosed) process.exit(0);
+    const next = await waitForPeer({ build: peer.build, timeoutMs: 20000 });
+    if (!next) log('The new instance never came up');
+    await findPrimary({ peer: next });
+  }).finally(() => { handoffInProgress = false; });
 }
 
 async function takeOverFrom(peer) {
@@ -530,28 +652,18 @@ async function takeOverFrom(peer) {
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
     await sleep(300);
-    try {
-      await bridge.start();
-      await startHttpServer();
+    if (await bindPorts()) {
       log(`Took over the browser bridge from v${peer.version}`);
       return true;
-    } catch (err) {
-      if (err.code !== 'EADDRINUSE') throw err;
-      await bridge.stop();
     }
   }
   log('Primary did not release the ports in time');
   return false;
 }
 
-async function runStdioProxy(peer) {
-  const live = await waitForPeer({ timeoutMs: 30000 }) || peer;
-  const client = await connectProxyClient();
-  const server = new Server({ name: NAME, version: VERSION }, { capabilities: { tools: {} } });
-  bindProxyHandlers(server, client);
-  server.onclose = () => process.exit(0);
-  await server.connect(new StdioServerTransport());
-  log(`Proxying stdio to the running instance (v${live.version}) at http://127.0.0.1:${MCP_PORT}/mcp`);
+async function runStdioProxy() {
+  await changeRole(() => findPrimary());
+  await attachStdio();
 }
 
 async function attachStdioBroken(message) {
@@ -600,7 +712,7 @@ async function main() {
     const tookOver = isNewerBuild({ version: VERSION, build: BUILD }, peer) && await takeOverFrom(peer);
     if (!tookOver) {
       if (STDIO) {
-        await runStdioProxy(peer);
+        await runStdioProxy();
         return;
       }
       log(`Already running (v${peer.version}) at http://127.0.0.1:${MCP_PORT}/mcp. Nothing to do.`);
@@ -614,7 +726,8 @@ async function main() {
   log(`Browser WebSocket: ws://localhost:${WS_PORT}`);
   log('Waiting for connections...');
 
-  if (STDIO) await attachStdioPrimary();
+  role = 'primary';
+  if (STDIO) await attachStdio();
 }
 
 main().then(() => {

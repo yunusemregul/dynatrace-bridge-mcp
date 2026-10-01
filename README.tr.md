@@ -52,7 +52,7 @@ code --add-mcp '{"name":"dynatrace-bridge-mcp","command":"npx","args":["-y","dyn
 
 **Bağımsız sunucu:** terminalde `npx -y dynatrace-bridge-mcp@latest` çalıştırın ve istemcileri `http://localhost:47832/mcp` adresine bağlayın (eski istemciler için `/sse`).
 
-**Aynı anda birden fazla istemci:** iki portu ilk başlayan sunucu alır. Başka bir istemcinin başlattığı sonraki her sunucu, araç çağrılarını ilkine iletir. Böylece bütün istemciler tek bir tarayıcı bağlantısını paylaşır.
+**Aynı anda birden fazla istemci:** iki portu ilk başlayan sunucu alır. Başka bir istemcinin başlattığı sonraki her sunucu, araç çağrılarını ilkine iletir. Böylece bütün istemciler tek bir tarayıcı bağlantısını paylaşır. İlk sunucu kapanırsa (örneğin istemcisi kapatıldığında), diğerlerinden biri birkaç saniye içinde portları kendiliğinden devralır ve kalanlar ona bağlanır; hiçbir şeyi yeniden bağlamak gerekmez.
 </details>
 
 ### 2. Tarayıcı uzantısını kurun
@@ -162,7 +162,7 @@ Adım 1 ve 2'yi sen çalıştırabilirsin. Tarayıcı adımları kullanıcıyı 
 | `service_overview` | Tek servis: yüzdelikler, hatalar, işlem hacmi, çağıranlar ve çağrılanlar, host ve pod'lar, problemler. |
 | `list_events` | Deployment'lar, yeniden başlatmalar, Kubernetes ve anomali olayları; aynı olaylar tek satırda toplanır. |
 | `list_problems` | Zaman aralığında etkin problemler; durum, etki, önem ve varlığa göre süzülebilir. |
-| `get_problem` | Tek problemin ayrıntısı: kanıtlar, kök neden bulguları, etki, tetikleyen olay, bağımlılık yolu. |
+| `get_problem` | Tek problemin özeti: varlık bazında kanıtlar, kök neden bulguları, etki, tetikleyen olay, etkilenen istekler, bağımlılık yolu; `detail` ile tek bir bölümün tamamı alınır. |
 
 **Kubernetes, host'lar, process'ler**
 
@@ -196,7 +196,7 @@ Adım 1 ve 2'yi sen çalıştırabilirsin. Tarayıcı adımları kullanıcıyı 
 | `service_backtrace` | Bir servisi kimler çağırıyor; giriş isteklerine ve job'lara kadar. |
 | `top_exceptions` | Sayıya göre exception sınıfları; tüm servislerde veya tek serviste. |
 | `cron_job_statistics` | Cron job'lar; toplam süre, ortalama, en uzun çalışma, çalışma sayısı ve hatalara göre. |
-| `top_database_statements` | Bir veritabanı servisinin SQL ifadeleri; toplam süre, ortalama, maksimum veya çalışma sayısına göre. |
+| `top_database_statements` | Bir veritabanı servisinin SQL ifadeleri; toplam süre, ortalama, maksimum veya çalışma sayısına göre. Aynı adı taşıyan veritabanı servisleri birleştirilir. |
 | `statement_callers` | Bir SQL ifadesini hangi servisler, istekler ve job'lar çalıştırıyor. |
 | `slow_statement_executions` | Bir ifadenin yavaş çalışmaları, ait oldukları trace'lerle. |
 
