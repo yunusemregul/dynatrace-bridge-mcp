@@ -12,8 +12,6 @@ Kurumsal SSO arkasındaki Dynatrace Managed kurulumları nadiren API token verir
 
 ![Mimari: AI istemcisi (Claude Code, Cursor, Codex, …) localhost:47832 üzerinden stdio veya HTTP ile MCP sunucusuyla konuşur. Sunucu, localhost:47831 üzerinden WebSocket ile, giriş yaptığınız Dynatrace sekmesindeki Dynatrace Bridge tarayıcı uzantısıyla konuşur. Üçü de sizin bilgisayarınızda çalışır. Uzantı Dynatrace Managed üzerindeki /e/{env}/rest/* adreslerine GET isteği gönderir, Dynatrace de mevcut oturumunuzla yanıt verir.](docs/images/tr/architecture.png)
 
-> **Durum: erken aşama.** Dynatrace uç noktaları tek bir Dynatrace Managed kurulumunda (klasik arayüz, sürüm 1.346) elle incelendi. Zincirin tamamı (AI istemcisi, sunucu, uzantı, Dynatrace) şimdiye kadar yalnızca uydurma verilerle çalışan yerel bir temsili sayfaya karşı çalıştırıldı; bu sayfadaki ekran görüntüleri de oradan alındı. Gerçek bir ortamda henüz uçtan uca çalıştırılmadı. Pürüz çıkabilir; karşılaşırsanız lütfen bildirin.
-
 ## Kurulum
 
 Yaklaşık iki dakika sürer. Terminali olan bir AI ajanı mı kullanıyorsunuz? [Kurulumu ona bırakın](#kurulumu-ai-yapsın).

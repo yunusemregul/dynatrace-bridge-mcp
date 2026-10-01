@@ -12,8 +12,6 @@ Dynatrace Managed clusters behind corporate SSO rarely hand out API tokens, and 
 
 ![Architecture: the AI client (Claude Code, Cursor, Codex, …) talks to the MCP server over stdio or HTTP on localhost:47832. The server talks over a WebSocket on localhost:47831 to the Dynatrace Bridge browser extension in your logged-in Dynatrace tab. All three run on your machine. The extension sends GET requests to /e/{env}/rest/* on Dynatrace Managed, which answers with your existing login.](docs/images/architecture.png)
 
-> **Status: early.** The Dynatrace endpoints were explored by hand on one Dynatrace Managed cluster (classic UI, version 1.346). The complete chain (AI client, server, extension, Dynatrace) has so far only been run against a local stand-in page with invented data, which is also where the screenshots on this page come from. It has not yet been run end to end against a real tenant, so expect rough edges and please report them.
-
 ## Setup
 
 Takes about two minutes. Using an AI agent with a terminal? [Let it do the setup](#let-your-ai-do-the-setup).
