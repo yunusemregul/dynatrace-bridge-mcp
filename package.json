@@ -1,6 +1,6 @@
 {
   "name": "dynatrace-bridge-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server that lets AI assistants query Dynatrace Managed (services, traces, metrics, pods, problems) through your authenticated browser session, with no API tokens required.",
   "type": "module",
   "main": "server.js",
